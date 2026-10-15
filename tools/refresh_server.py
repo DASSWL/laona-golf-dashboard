@@ -129,6 +129,7 @@ PAGE = """<!doctype html>
 <style>
 :root { color-scheme: light; --bg: #f5f7f3; --panel: #fff; --fg: #1b211c; --muted: #5b655d; --line: #e1e6df; --ok: #1d7533; --bad: #b3261e; }
 @media (prefers-color-scheme: dark) { :root { color-scheme: dark; --bg: #111411; --panel: #191d1a; --fg: #e6eae4; --muted: #9aa49b; --line: #2b312c; --ok: #63c681; --bad: #f2806f; } }
+[hidden] { display: none !important; }
 body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
   font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", sans-serif; padding: 16px; box-sizing: border-box; }
 .card { width: min(440px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 28px; display: grid; gap: 14px; }
@@ -204,6 +205,8 @@ if (auto) {
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
+        if self.path.startswith("/status") or self.path == "/favicon.ico":
+            return  # the progress page polls every 1.5 s; keep the terminal readable
         sys.stderr.write("[refresh] " + (fmt % args) + "\n")
 
     def send(self, code, body, ctype="application/json; charset=utf-8", extra=None):
