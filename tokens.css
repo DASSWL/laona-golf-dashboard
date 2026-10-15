@@ -1,0 +1,121 @@
+/* Theme tokens for the standalone site — the same names the page used inside the Dashboard type.
+   Palette: fairway green on a faintly green-tinted paper; blue long-form, orange Shorts, ochre bogeys. */
+:root {
+  color-scheme: light;
+  --font-anthropic-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --font-anthropic-serif: "Noto Serif SC", "Songti SC", "Source Han Serif SC", Georgia, serif;
+
+  --color-bg: #f5f7f3;
+  --color-panel: #ffffff;
+  --color-fg: #1b211c;
+  --color-fg-muted: #5b655d;
+  --color-border-line: #e1e6df;
+  --color-ok: #1d7533;
+  --color-warn: #9a5b00;
+  --color-bad: #b3261e;
+
+  --cds-chart-categorical-1: #3a6fd8;
+  --cds-chart-categorical-2: #e47c2c;
+  --cds-chart-categorical-6: #2f8a41;
+  --cds-chart-muted: #c4cac3;
+  --cds-chart-status-serious: #c28a14;
+  --cds-chart-status-critical: #cf3f2c;
+  --cds-chart-reference: #8e978f;
+  --cds-chart-grid: rgba(24, 40, 26, 0.08);
+  --cds-chart-axis: #cdd3cb;
+
+  --cds-surface-popover: #ffffff;
+  --cds-border: rgba(24, 40, 26, 0.14);
+  --cds-shadow-popover: 0 10px 28px rgba(16, 30, 18, 0.14);
+  --cds-text-secondary: #5b655d;
+
+  --cds-gap-xs: 4px;
+  --cds-gap-sm: 8px;
+  --cds-gap-md: 14px;
+  --cds-gap-lg: 20px;
+  --cds-gap-xl: 28px;
+  --cds-pad-xs: 6px;
+  --cds-pad-sm: 10px;
+  --cds-pad-md: 14px;
+  --cds-pad-lg: 20px;
+  --cds-pad-xl: 32px;
+  --cds-radius: 12px;
+  --cds-font-size-caption: 12px;
+  --cds-font-size-body: 14px;
+  --cds-font-size-heading: 15px;
+  --cds-font-size-title: 22px;
+  --cds-font-weight-medium: 600;
+  --cds-dur-base: 0.2s;
+  --cds-dur-slow: 0.45s;
+  --cds-ease-out: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  --sk-a: rgba(24, 40, 26, 0.06);
+  --sk-b: rgba(24, 40, 26, 0.12);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #111411;
+    --color-panel: #191d1a;
+    --color-fg: #e6eae4;
+    --color-fg-muted: #9aa49b;
+    --color-border-line: #2b312c;
+    --color-ok: #63c681;
+    --color-warn: #e3a64a;
+    --color-bad: #f2806f;
+
+    --cds-chart-categorical-1: #6c9cf2;
+    --cds-chart-categorical-2: #f0964e;
+    --cds-chart-categorical-6: #4caf61;
+    --cds-chart-muted: #555e56;
+    --cds-chart-status-serious: #d9a43a;
+    --cds-chart-status-critical: #ee6a56;
+    --cds-chart-reference: #7f8980;
+    --cds-chart-grid: rgba(228, 238, 228, 0.08);
+    --cds-chart-axis: #3a413b;
+
+    --cds-surface-popover: #222723;
+    --cds-border: rgba(228, 238, 228, 0.16);
+    --cds-shadow-popover: 0 10px 28px rgba(0, 0, 0, 0.55);
+    --cds-text-secondary: #9aa49b;
+
+    --sk-a: rgba(228, 238, 228, 0.05);
+    --sk-b: rgba(228, 238, 228, 0.11);
+  }
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-anthropic-sans);
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+.page {
+  padding-block: max(20px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 900px) {
+  .page { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)); }
+}
+.lx :is(h1, h2, h3, h4) { font-size: inherit; font-weight: inherit; }
+
+/* Loading placeholder (the Dashboard type drew these for us). */
+.dash-skeleton { position: relative; color: transparent !important; }
+:where(span, b, h1, p).dash-skeleton { display: inline-block; min-width: 3.5em; min-height: 1em; }
+p.dash-skeleton { display: block; min-width: 60%; }
+.dash-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0.15em 0;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--sk-a), var(--sk-b), var(--sk-a));
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dash-skeleton::after { animation: sk 1.4s ease-in-out infinite; }
+  @keyframes sk { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+}

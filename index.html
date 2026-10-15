@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>老那高尔夫频道仪表盘</title>
+<meta name="description" content="老那高尔夫 Lao Na Golf YouTube 频道数据看板：最近 18 洞记分卡、内容支柱、观众评论和运营建议。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap">
+<link rel="stylesheet" href="tokens.css?v=3">
+<link rel="stylesheet" href="lx.css?v=3">
+</head>
+<body>
+<main class="page">
+<div class="lx">
+
+  <header class="lx-hero" id="overview">
+    <div class="lx-banner dash-skeleton" data-source="channel"></div>
+    <div class="lx-id">
+      <div class="lx-avatar-slot dash-skeleton" data-source="channel"></div>
+      <div class="lx-name">
+        <h1 data-source="channel" data-field="title" data-row="0" data-fmt="text" class="dash-skeleton">—</h1>
+        <div class="lx-meta">
+          <span data-source="channel" data-field="handle" data-row="0" data-fmt="text">—</span>
+          <span>加入于 <span data-source="channel" data-field="joined" data-row="0" data-fmt="bjdate">—</span></span>
+          <span>数据截至 <span data-source="channel" data-field="fetchedAt" data-row="0" data-fmt="bjtime">—</span>（北京时间，<span data-source="channel" data-field="fetchedAt" data-row="0" data-fmt="ago">—</span>）</span>
+          <button type="button" class="lx-refresh" id="lx-refresh" hidden title="在本机运行 tools/refresh_server.py 后可用">刷新数据</button>
+        </div>
+        <span class="lx-note-official">第三方数据看板，非频道官方页面 · 数据来自 YouTube 公开接口</span>
+      </div>
+      <nav class="lx-nav" aria-label="页面导航">
+        <a href="#scorecard">最近 18 洞</a>
+        <a href="#caddie">球童笔记</a>
+        <a href="#tracker">成绩走势</a>
+        <a href="#bag">内容</a>
+        <a href="#gallery">观众</a>
+        <a href="#tee">标题</a>
+        <a href="#library">视频库</a>
+        <a href="#method">说明</a>
+      </nav>
+    </div>
+    <p class="lx-lede dash-skeleton" id="takeaway"></p>
+  </header>
+
+  <div class="lx-kpis" id="kpis">
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">订阅者</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="channel" data-field="subscribers" data-row="0" data-fmt="wan">—</span>
+      <span class="lx-kpi-sub">YouTube 公开数，取三位有效数字</span>
+    </div>
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">总播放</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="channel" data-field="views" data-row="0" data-fmt="wan">—</span>
+      <span class="lx-kpi-sub">频道开通以来累计</span>
+    </div>
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">公开视频</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="channel" data-field="videoCount" data-row="0" data-fmt="int">—</span>
+      <span class="lx-kpi-sub">长视频 <b data-source="kpis" data-field="longVideos" data-row="0" data-fmt="int">—</b> · Shorts <b data-source="kpis" data-field="shortVideos" data-row="0" data-fmt="int">—</b></span>
+    </div>
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">长视频播放中位数</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="kpis" data-field="longMedianViews" data-row="0" data-fmt="wan">—</span>
+      <span class="lx-kpi-sub">Shorts 中位数 <b data-source="kpis" data-field="shortMedianViews" data-row="0" data-fmt="wan">—</b></span>
+    </div>
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">近 90 天长视频播放中位数</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="kpis" data-field="last90LongMedian" data-row="0" data-fmt="wan">—</span>
+      <span class="lx-kpi-sub"><span class="lx-delta" data-source="kpis" data-field="last90Change" data-row="0" data-fmt="delta">—</span> 较此前 90 天</span>
+    </div>
+    <div class="lx-kpi">
+      <span class="lx-kpi-label">长视频互动率中位数</span>
+      <span class="lx-kpi-value dash-skeleton" data-source="kpis" data-field="longEngagement" data-row="0" data-fmt="pct">—</span>
+      <span class="lx-kpi-sub">（点赞 + 评论）÷ 播放</span>
+    </div>
+  </div>
+
+  <section class="lx-section" id="scorecard">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Scorecard</span>
+        <h2>最近 18 洞</h2>
+        <p>最近 18 支长视频，每支对比“标准杆”：此前 10 支长视频的播放中位数。超过越多，杆数越低。</p>
+      </div>
+      <div class="lx-round" id="round-summary"></div>
+    </div>
+    <div class="lx-card">
+      <div class="lx-box" id="scorecard-box" style="min-height:250px"></div>
+      <div class="lx-sc-key">
+        <span><span class="lx-sym eagle">−2</span>老鹰 ≥ 2×</span>
+        <span><span class="lx-sym birdie">−1</span>小鸟 1.25–2×</span>
+        <span><span class="lx-sym par">E</span>标准杆 0.8–1.25×</span>
+        <span><span class="lx-sym bogey">+1</span>柏忌 0.5–0.8×</span>
+        <span><span class="lx-sym double">+2</span>双柏忌 &lt; 0.5×</span>
+        <span><span class="lx-sym fresh">新</span>不满 7 天，不计分</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lx-section" id="caddie">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Caddie notes</span>
+        <h2>球童笔记：下一步怎么打</h2>
+        <p>根据 2026 年 10 月 15 日的视频数据和评论样本整理，每条建议都附上依据，数字都重新计算核对过。文中的“标准杆倍数”就是上面记分卡里的倍数。刷新数据只更新图表和数字，不会改写这些建议。</p>
+      </div>
+    </div>
+    <div class="lx-box" id="caddie-lead" style="min-height:3.5em"></div>
+    <div class="lx-sw-grid lx-box" id="caddie-sw" style="min-height:120px"></div>
+    <div class="lx-recs lx-box" id="caddie-recs" style="min-height:220px"></div>
+    <div class="lx-card">
+      <div class="lx-card-head">
+        <h3>可以拍的选题</h3>
+        <span class="lx-note">从爆款视频和观众提问里来</span>
+      </div>
+      <div class="lx-ideas lx-box" id="caddie-ideas" style="min-height:140px"></div>
+    </div>
+  </section>
+
+  <section class="lx-section" id="tracker">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Shot tracker</span>
+        <h2>每支视频的成绩</h2>
+        <p>每个点是一支视频，纵轴是播放（对数刻度），虚线是当时的标准杆，空心点是发布不满 7 天的新视频。点击圆点可直接打开视频。</p>
+      </div>
+      <div class="lx-seg" id="tracker-seg" role="group" aria-label="视频格式">
+        <button type="button" data-type="long" aria-pressed="true">长视频</button>
+        <button type="button" data-type="short" aria-pressed="false">Shorts</button>
+      </div>
+    </div>
+    <div class="lx-card">
+      <div class="lx-legend lx-box" id="tracker-legend" data-source="grades" style="min-height:18px"></div>
+      <div class="lx-box lx-chart-lg" id="tracker-box" data-source="scored"></div>
+    </div>
+    <div class="lx-grid">
+      <div class="lx-card">
+        <div class="lx-card-head">
+          <h3>每月发布</h3>
+          <span class="lx-legend" data-source="monthly"><span><span class="lx-sw sq s-long"></span>长视频</span><span><span class="lx-sw sq s-short"></span>Shorts</span></span>
+        </div>
+        <p class="lx-note">按发布月份统计的视频数</p>
+        <div class="lx-box lx-chart" id="monthly-box" data-source="monthly"></div>
+      </div>
+      <div class="lx-card">
+        <div class="lx-card-head"><h3>时长与播放</h3></div>
+        <p class="lx-note">长视频按时长分组的播放中位数。时长和内容类型有关：越长的视频，越多是教练课和新闻合集。</p>
+        <div class="lx-box lx-chart" id="durations-box" data-source="durations"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lx-section" id="bag">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">In the bag</span>
+        <h2>内容支柱：哪支杆最好用</h2>
+        <p>按播放列表把视频分成 6 个内容支柱（不在任何列表里的记为未分类），对比发布占比和播放占比：播放占比高于发布占比的，就是更划算的内容。</p>
+      </div>
+    </div>
+    <div class="lx-card">
+      <h3>内容支柱</h3>
+      <div class="lx-box" id="pillars-box" style="min-height:260px"></div>
+    </div>
+    <div class="lx-stack">
+      <div class="lx-card">
+        <h3>长视频与 Shorts</h3>
+        <p class="lx-note">Shorts 通过 youtube.com/shorts/ 链接识别</p>
+        <div class="lx-box" id="formats-box" style="min-height:110px"></div>
+      </div>
+      <div class="lx-card">
+        <h3>系列表现</h3>
+        <p class="lx-note">标题或播放列表里成系列的内容，按总播放排序；鼠标停在一行上可以看说明</p>
+        <div class="lx-box" id="series-box" style="min-height:160px"></div>
+      </div>
+    </div>
+    <div class="lx-grid-3 lx-box" id="findings-box" style="min-height:200px"></div>
+  </section>
+
+  <section class="lx-section" id="gallery">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Gallery</span>
+        <h2>观众在说什么</h2>
+        <p>样本来自播放最高的 12 支和最新几支视频，每支取按相关度排序的前 50 条顶层评论，不含评论者名字。</p>
+      </div>
+    </div>
+    <div class="lx-card">
+      <div class="lx-box lx-note" id="profile-box" style="font-size:var(--cds-font-size-body);color:var(--color-fg)"></div>
+    </div>
+    <div class="lx-grid">
+      <div class="lx-card">
+        <h3>评论主题</h3>
+        <div class="lx-box" id="themes-box" style="min-height:240px"></div>
+      </div>
+      <div class="lx-box" id="asks-box" style="display:grid;gap:var(--cds-gap-md);min-height:240px"></div>
+    </div>
+    <div class="lx-card-head"><h3>点赞最多的评论</h3></div>
+    <div class="lx-quotes lx-box" id="quotes-box" style="min-height:200px"></div>
+  </section>
+
+  <section class="lx-section" id="tee">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Tee shot</span>
+        <h2>标题模式</h2>
+        <p>长视频标题里出现某个特征时，播放中位数是没有时的几倍。老视频累计时间长会抬高倍数，所以每行的结论也对照了日均播放和标准杆倍数。是相关不是因果，样本小的要谨慎看。</p>
+      </div>
+    </div>
+    <div class="lx-card">
+      <div class="lx-box" id="titles-take"></div>
+      <div class="lx-box" id="titles-box" style="min-height:260px"></div>
+    </div>
+  </section>
+
+  <section class="lx-section" id="library">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Yardage book</span>
+        <h2>视频库</h2>
+        <p>全部公开视频。点表头排序，标题可以直接打开视频。</p>
+      </div>
+    </div>
+    <div class="lx-card">
+      <div class="lx-controls">
+        <input class="lx-input" id="lib-q" type="search" placeholder="搜索标题，比如 300码、模拟器、新闻" aria-label="搜索视频标题">
+        <div class="lx-seg" id="lib-type" role="group" aria-label="视频格式">
+          <button type="button" data-type="all" aria-pressed="true">全部</button>
+          <button type="button" data-type="long" aria-pressed="false">长视频</button>
+          <button type="button" data-type="short" aria-pressed="false">Shorts</button>
+        </div>
+        <select class="lx-select" id="lib-pillar" aria-label="内容支柱"><option value="all">全部内容支柱</option></select>
+        <span class="lx-count" id="library-count"></span>
+      </div>
+      <div class="lx-box" id="library-box" style="min-height:400px"></div>
+    </div>
+  </section>
+
+  <section class="lx-section" id="method">
+    <div class="lx-head">
+      <div class="lx-head-text">
+        <span class="lx-eyebrow">Rules of golf</span>
+        <h2>数据说明</h2>
+      </div>
+    </div>
+    <div class="lx-method">
+      <div>
+        <h3>数据从哪来</h3>
+        <p>YouTube Data API v3 的公开数据：频道信息、上传列表、每支视频的统计、播放列表和评论。播放、点赞、评论都是截至抓取时的累计值，新视频还在涨。这是第三方整理的看板，不是 YouTube 或频道官方页面。</p>
+      </div>
+      <div>
+        <h3>标准杆和杆数</h3>
+        <p>标准杆 = 同一格式（长视频或 Shorts）此前 10 支视频的播放中位数。播放是标准杆的 2 倍以上记老鹰，1.25–2 倍小鸟，0.8–1.25 倍标准杆，0.5–0.8 倍柏忌，0.5 倍以下双柏忌。每种格式的第一支视频没有标准杆。</p>
+      </div>
+      <div>
+        <h3>内容支柱怎么分</h3>
+        <p>教学：教学、新手入门、规则、健身、明星挥杆分析。新闻赛事：每月新闻、新闻、比赛介绍、人物介绍。装备测评：装备和品牌、开箱测评。旅行 Vlog：下场打球、旅行、球场介绍。升学和娱乐（搞笑、技巧秀）各自成类。不在任何播放列表里的记为未分类。</p>
+      </div>
+      <div>
+        <h3>观众洞察和建议</h3>
+        <p>评论主题、观众请求、标题模式、数据发现和建议由 Claude 分析数据和评论后写成，又经过一轮重新计算数字、一轮挑推理毛病的复核。它们是判断，不是 YouTube 给出的数字。</p>
+      </div>
+      <div>
+        <h3>公开数据看不到的</h3>
+        <p>下面这些只有频道主授权 YouTube Analytics 后才能接入：</p>
+        <div class="lx-locked">
+          <span class="lx-chip">观看时长</span><span class="lx-chip">平均观看时长</span><span class="lx-chip">曝光点击率</span><span class="lx-chip">流量来源</span><span class="lx-chip">观众地区与年龄</span><span class="lx-chip">订阅增长曲线</span><span class="lx-chip">收入</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="lx-toast" id="lx-toast" role="status" hidden></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="dash-shim.js?v=3"></script>
+<script src="lx.js?v=3"></script>
+</body>
+</html>
